@@ -1,4 +1,4 @@
-from pyexpat.errors import messages
+from django.contrib import messages
 from django.shortcuts import redirect, render
 from TaskPage.models import Task
 from AdminPages.models import Admin
@@ -24,16 +24,17 @@ def AddTask(request):
         taskTitle = request.POST['title']
         teacherName = request.POST['name']
         taskDescription = request.POST['description']
-        taskPriorty = request.POST.get('priorty')
-        
+        taskPriorty = request.POST.get('priority')
+        global currentAdmin
+        name=currentAdmin.username
         if Task.objects.filter(taskID = taskId):
-            messages.error(request, "there is already a task with this name")
-        if Teacher.objects.filter(username = teacherName):
+            messages.error(request, "there is already a task with this ID")
+        elif Teacher.objects.filter(username = teacherName):
             task = Task(taskID=taskId, 
                         title=taskTitle, 
                         teacherName=teacherName,
                         description=taskDescription, 
-                        priority=taskPriorty,createdBy = currentAdmin
+                        priority=taskPriorty,createdBy = request.session.get('current_admin_name')
                         )
             if taskPriorty == "low":
                 task.priority = "Low"
@@ -44,13 +45,13 @@ def AddTask(request):
             
 
             task.save()
-            return render(request,'AdminPages/AdminHome.html')
+            return render(request,'AdminPages/ViewAdminTasks.html')
         else : 
-            messages.error(request, "there is no teacher with this name ")
+            messages.error(request, "there is no teacher with this name")
     return render(request, 'AdminPages/AddTask.html')
 
 def EditTask(request):
-    
+
     return render(request, 'AdminPages/EditTask.html')
 
 def ViewAdminTasks(request):

@@ -45,13 +45,16 @@ def SignUp(request):
                 myadmin = Admin(username=username, email=email, password=password)
                 global currentAdmin 
                 currentAdmin = Admin(username=username, email=email, password=password)
+                request.session['current_admin_name'] = myadmin.username
                 myadmin.save()
                 return redirect('AdminHome')
             else:
                 myteacher = Teacher(username=username, email=email, password=password)
                 global currentTeacher 
                 currentTeacher = Teacher(username=username, email=email, password=password)
+                request.session['current_teacher_name'] = myteacher.username
                 myteacher.save()
+                
                 return redirect('TeacherHome')
 
             return redirect('LogIn')
@@ -67,12 +70,15 @@ def LogIn(request):
         if User.objects.filter(username = username, password = password).exists():
             if Teacher.objects.filter(username = username, password = password).exists():
                 global currentTeacher
+                
                 currentTeacher= Teacher.objects.get(username=username)
                 print(currentTeacher.username)
+                request.session['current_teacher_name'] = username
                 return redirect('TeacherHome')
             else:
                 global currentAdmin
                 currentAdmin= Admin.objects.get(username=username)
+                request.session['current_admin_name'] = username
                 return redirect('AdminHome')
         else:
             messages.error(request, "Wrong username or password")
