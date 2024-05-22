@@ -1,23 +1,56 @@
-from django.shortcuts import render
+from pyexpat.errors import messages
+from django.shortcuts import redirect, render
 from TaskPage.models import Task
 from AdminPages.models import Admin
 from TeacherPages.models import Teacher
+from WebPages.views import currentAdmin
 
+
+
+
+
+# taskID = models.IntegerField(default=0)
+#     title = models.CharField(max_length=100)
+#     teacherName = models.CharField(max_length=100)
+#     priority = models.CharField(max_length=10, choices = taskPriority)
+#     description = models.TextField(max_length=1000)
+#     createdBy = models.CharField(max_length=100)
+#     status = models.BooleanField(default=False, choices 
 # Create your views here.
 
 def AddTask(request):
     if request.method == 'POST':
-        taskId = request.Post['ID']
-        taskTitle = request.Post['title']
-        teacherName = request.Post['name']
-        taskDescription = request.Post['description']
-
+        taskId = request.POST['ID']
+        taskTitle = request.POST['title']
+        teacherName = request.POST['name']
+        taskDescription = request.POST['description']
+        taskPriorty = request.POST.get('priorty')
         
-        
+        if Task.objects.filter(taskID = taskId):
+            messages.error(request, "there is already a task with this name")
+        if Teacher.objects.filter(username = teacherName):
+            task = Task(taskID=taskId, 
+                        title=taskTitle, 
+                        teacherName=teacherName,
+                        description=taskDescription, 
+                        priority=taskPriorty,createdBy = currentAdmin
+                        )
+            if taskPriorty == "low":
+                task.priority = "Low"
+            elif taskPriorty == "medium":
+                task.priority = "Medium"
+            else:
+                task.priority = "High"
+            
 
+            task.save()
+            return render(request,'AdminPages/AdminHome.html')
+        else : 
+            messages.error(request, "there is no teacher with this name ")
     return render(request, 'AdminPages/AddTask.html')
 
 def EditTask(request):
+    
     return render(request, 'AdminPages/EditTask.html')
 
 def ViewAdminTasks(request):

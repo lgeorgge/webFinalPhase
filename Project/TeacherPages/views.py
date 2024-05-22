@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db.models import Q
 from TaskPage.models import Task
+from WebPages.views import currentTeacher
 
 # Create your views here.
 
@@ -9,7 +10,7 @@ def ViewTeacherTasks(request):
         search_query = request.POST.get('searchForTeacherTask', '')
         filters = request.POST.getlist('filter')
 
-        queryset = Task.objects.all()
+        queryset = Task.objects.filter(teacherName = currentTeacher)
 
         if search_query:
             queryset = queryset.filter(
