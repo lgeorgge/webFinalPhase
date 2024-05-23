@@ -1,72 +1,129 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="{% static 'CSS/WebStyle.css' %}">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap">
-        <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
-        <title>My Tasks</title>
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="{% static 'CSS/WebStyle.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+    />
+    <title>My Tasks</title>
+  </head>
 
-    <body>
-        <div>
-            <nav class="navbar">
-                <ul>
-                    <img class="icon" src="{% static 'Images/Icon.png' %}" alt="image not found" width="35px">
-                    <b>TASKTRAX</b>
-                    <li><a href="{% url 'Welcome' %}" id="logout">Log Out</a></li>
-                    <li><a href="{% url 'AdminHome' %}">Home</a></li>
-                    <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
-                    <li><a href="{% url 'AboutUs' %}">About Us</a></li>
-                    <li><a href="{% url 'WhyTASKTRAX' %}">Why TASKTRAX</a></li>
-                </ul>
-            </nav>
+  <body>
+    <div>
+      <nav class="navbar">
+        <ul>
+          <img
+            class="icon"
+            src="{% static 'Images/Icon.png' %}"
+            alt="image not found"
+            width="35px"
+          />
+          <b>TASKTRAX</b>
+          <li><a href="{% url 'Welcome' %}" id="logout">Log Out</a></li>
+          <li><a href="{% url 'AdminHome' %}">Home</a></li>
+          <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
+          <li><a href="{% url 'AboutUs' %}">About Us</a></li>
+          <li><a href="{% url 'WhyTASKTRAX' %}">Why TASKTRAX</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="tablebody">
+      <div class="tablewrapper">
+        <div class="tabletitle">
+          <h1>My Tasks</h1>
+
+          <div class="searchbar">
+            <input
+              type="search"
+              placeholder="Search by Id, title or teacher's name..."
+              name="searchForAdminTask"
+              id="searchForAdminTask"
+            />
+            <i class="bx bx-search-alt-2" onclick="PopulateAdminTable()"></i>
+          </div>
         </div>
 
-        <div class="tablebody">
-            <div class="tablewrapper">
-                <div class="tabletitle">
-                    <h1>My Tasks</h1>
+        <div class="tablecontent">
+          <table id="myTableA">
+            <thead>
+              <tr>
+                <th>delete</th>
+                <th>edit</th>
+                <th>ID</th>
+                <th>Task Title</th>
+                <th>Teacher Name</th>
+                <th>Priority</th>
+              </tr>
+            </thead>
 
-                    <div class="searchbar">
-                        <input type="search" placeholder="Search by Id, title or teacher's name..." name="searchForAdminTask" id="searchForAdminTask">
-                        <i class="bx bx-search-alt-2" onclick="PopulateAdminTable()"></i>
-                    </div>
-                </div>
+            <tbody>
+              {% for task in tasks %}
+              <tr>
+                <td>
+                  <form
+                    action="{% url 'delete_task' task.taskID %}"
+                    method="post"
+                  >
+                    {% csrf_token %}
+                    <button
+                      type="submit"
+                      style="
+                        border: none;
+                        background: none;
+                        cursor: pointer;
+                        margin-right: 7px;
+                      "
+                    >
+                      <i class="bx bxs-trash-alt"></i>
+                    </button>
+                  </form>
+                </td>
 
-                <div class="tablecontent">
-                    <table id="myTableA">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>ID</th>
-                                <th>Task Title</th>
-                                <th>Teacher Name</th>
-                                <th>Priority</th>
-                            </tr>
-                        </thead>
+                {% comment %}
+                <td class="tablebtns">
+                  <i class="bx bxs-edit-alt" style="margin-right: 7px"></i>
+                  <i class="bx bxs-trash-alt"></i>
+                </td>
+                {% endcomment %}
 
-                        <tbody>
-                            {% for task in tasks %}
-                                <tr>
-                                    <td class="tablebtns">
-                                        <i class="bx bxs-edit-alt" style="margin-right: 7px;"></i>
-                                        <i class="bx bxs-trash-alt"></i>
-                                    </td>
-                                    <td>{{task.taskID}}</td>
-                                    <td>{{task.title}}</td>
-                                    <td>{{task.teacherName}}</td>
-                                    <td>{{task.priority}}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table> 
-                </div>
-            </div>
+                <td>
+                  <form action="{% url 'EditTask' task.taskID %}" method="post">
+                    {% csrf_token %}
+                    <button
+                      type="submit"
+                      style="
+                        border: none;
+                        background: none;
+                        cursor: pointer;
+                        margin-right: 7px;
+                      "
+                    >
+                      <i class="bx bxs-edit-alt" style="margin-right: 7px"></i>
+                    </button>
+                  </form>
+                </td>
+
+                <td>{{task.taskID}}</td>
+                <td>{{task.title}}</td>
+                <td>{{task.teacherName}}</td>
+                <td>{{task.priority}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        <script src="{% static 'JS/Index.js' %}"></script>
-    </body>
+      </div>
+    </div>
+    <script src="{% static 'JS/Index.js' %}"></script>
+  </body>
 </html>

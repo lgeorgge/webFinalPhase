@@ -4,19 +4,10 @@ from TaskPage.models import Task
 from AdminPages.models import Admin
 from TeacherPages.models import Teacher
 from WebPages.views import currentAdmin
+from django.shortcuts import get_object_or_404
 
 
 
-
-
-# taskID = models.IntegerField(default=0)
-#     title = models.CharField(max_length=100)
-#     teacherName = models.CharField(max_length=100)
-#     priority = models.CharField(max_length=10, choices = taskPriority)
-#     description = models.TextField(max_length=1000)
-#     createdBy = models.CharField(max_length=100)
-#     status = models.BooleanField(default=False, choices 
-# Create your views here.
 
 def AddTask(request):
     if request.method == 'POST':
@@ -24,92 +15,76 @@ def AddTask(request):
         taskTitle = request.POST['title']
         teacherName = request.POST['name']
         taskDescription = request.POST['description']
-        taskPriorty = request.POST.get('priority')
-        global currentAdmin
-        name=currentAdmin.username
-        if Task.objects.filter(taskID = taskId):
-            messages.error(request, "there is already a task with this ID")
-        elif Teacher.objects.filter(username = teacherName):
-            task = Task(taskID=taskId, 
-                        title=taskTitle, 
-                        teacherName=teacherName,
-                        description=taskDescription, 
-                        priority=taskPriorty,createdBy = request.session.get('current_admin_name')
-                        )
-            if taskPriorty == "low":
+        taskPriority = request.POST.get('priority')
+
+        if Task.objects.filter(taskID=taskId).exists():
+            messages.error(request, "There is already a task with this ID")
+        elif Teacher.objects.filter(username=teacherName).exists():
+            task = Task(
+                taskID=taskId,
+                title=taskTitle,
+                teacherName=teacherName,
+                description=taskDescription,
+                priority=taskPriority,
+                createdBy=request.session.get('current_admin_name')
+            )
+            if taskPriority == "low":
                 task.priority = "Low"
-            elif taskPriorty == "medium":
+            elif taskPriority == "medium":
                 task.priority = "Medium"
             else:
                 task.priority = "High"
-            
 
             task.save()
-            return render(request,'AdminPages/ViewAdminTasks.html')
-        else : 
-            messages.error(request, "there is no teacher with this name")
+            return redirect('ViewAdminTasks')
+        else:
+            messages.error(request, "There is no teacher with this name")
+
     return render(request, 'AdminPages/AddTask.html')
 
-def EditTask(request):
-
-    return render(request, 'AdminPages/EditTask.html')
 
 def ViewAdminTasks(request):
     return render(request, 'AdminPages/ViewAdminTasks.html', {'tasks':Task.objects.all()})
 
+def delete_task(request, task_id):
+    if request.method == 'POST':
+        task = get_object_or_404(Task, taskID=task_id)
+        task.delete()
+        #messages.success(request, "Task deleted successfully")
+        return redirect('ViewAdminTasks')
+    else:
+        messages.error(request, "Invalid request method for task deletion")
+        return redirect('ViewAdminTasks')
+    
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from TaskPage.models import Task
+from TeacherPages.models import Teacher
+
+def EditTask(request, task_id):
+    task = get_object_or_404(Task, taskID=task_id)
+    
+    if request.method == 'POST':
+        taskTitle = request.POST.get('title')
+        teacherName = request.POST.get('name')
+        taskDescription = request.POST.get('description')
+        taskPriority = request.POST.get('priority')
+
+        if not taskTitle or not teacherName or not taskDescription or not taskPriority:
+            messages.error(request, "All fields are required.")
+        elif not Teacher.objects.filter(username=teacherName).exists():
+            messages.error(request, "There is no teacher with this name")
+        else:
+            task.title = taskTitle
+            task.teacherName = teacherName
+            task.description = taskDescription
+            task.priority = taskPriority.capitalize()
+
+            task.save()
+            messages.success(request, "Task updated successfully")
+            return redirect('ViewAdminTasks')
+    
+    return render(request, 'AdminPages/EditTask.html', {'task': task})
 
 
-# def SignUp(request):
-#     if request.method == "POST":
-#         username = request.POST['username']
-#         email = request.POST['email']
-#         password = request.POST['password']
-#         confirmPassword = request.POST['confirmPassword']
-#         isadmin=request.POST.get('check')
-#         print(isadmin)
 
-#         if User.objects.filter(username=username):
-#             messages.error(request, "Username already exists")
-
-#         elif password != confirmPassword :
-#             messages.error(request, "Passwords don't match")
-
-#         else:
-#             myuser = User(username=username, email=email, password=password, isAdmin=isadmin)
-#             myuser.save()
-#             if (isadmin == 'A'):
-#                 myadmin = Admin(username=username, email=email, password=password)
-#                 global currentAdmin 
-#                 currentAdmin = Admin(username=username, email=email, password=password)
-#                 myadmin.save()
-#                 return redirect('AdminHome')
-#             else:
-#                 myteacher = Teacher(username=username, email=email, password=password)
-#                 global currentTeacher 
-#                 currentTeacher = Teacher(username=username, email=email, password=password)
-#                 myteacher.save()
-#                 return redirect('TeacherHome')
-
-#             return redirect('LogIn')
-
-#     return render(request, 'Webpages/SignUp.html')
-
-# def LogIn(request):
-#     if request.method == "POST":
-#         username = request.POST['username']
-#         password = request.POST['password']
-
-#         if User.objects.filter(username = username, password = password).exists():
-#             if Teacher.objects.filter(username = username, password = password).exists():
-#                 global currentTeacher
-#                 currentTeacher= Teacher.objects.get(username=username)
-#                 print(currentTeacher.username)
-#                 return redirect('TeacherHome')
-#             else:
-#                 global currentAdmin
-#                 currentAdmin= Admin.objects.get(username=username)
-#                 return redirect('AdminHome')
-#         else:
-#             messages.error(request, "Wrong username or password")
-
-#     return render(request, "WebPages/LogIn.html")
