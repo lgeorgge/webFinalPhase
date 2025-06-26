@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{% static 'CSS/WebStyle.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap">
+        <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+        <title>My Tasks</title>
+    </head>
+
+    <body>
+        <div>
+            <nav class="navbar">
+                <ul>
+                    <img class="icon" src="{% static 'Images/Icon.png' %}" alt="image not found" width="35px"/>
+                    <b>TASKTRAX</b>
+                    <li><a href="{% url 'Welcome' %}" id="logout">Log Out</a></li>
+                    <li><a href="{% url 'AdminHome' %}">Home</a></li>
+                    <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
+                    <li><a href="{% url 'AboutUs' %}">About Us</a></li>
+                    <li><a href="{% url 'WhyTASKTRAX' %}">Why TASKTRAX</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="tablebody">
+            <div class="tablewrapper">
+                <div class="tabletitle">
+                    <h1>My Tasks</h1>
+
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="searchbar">
+                            <input type="search" placeholder="Search by Id, title or teacher's name..." name="searchForAdminTask" id="searchForAdminTask"/>
+                            <i class="bx bx-search-alt-2"></i>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tablecontent">
+                    <table id="myTableA">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Task Title</th>
+                                <th>Teacher Name</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for task in tasks %}
+                                <tr id="trA">
+                                    <td class="tablebtns">
+                                        <form action="{% url 'EditTask' task.taskID %}" method="post" style="margin-right: 21.5px">
+                                            {% csrf_token %}
+                                            <button type="submit">
+                                                <i class="bx bxs-edit-alt" style="margin-right: 7px"></i>
+                                            </button>
+                                        </form>
+                                        <form id="deleteTask" data-task-id="{{task.taskID}}">
+                                            {% csrf_token %}
+                                            <button type="submit">
+                                                <i class="bx bxs-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td>{{task.taskID}}</td>
+                                    <td>{{task.title}}</td>
+                                    <td>{{task.teacherName}}</td>
+                                    <td>{{task.priority}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'JS/Index.js' %}"></script>
+    </body>
+</html>

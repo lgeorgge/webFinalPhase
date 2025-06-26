@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{% static 'CSS/WebStyle.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap">
+        <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+        <title>My Tasks</title>
+    </head>
+
+    <body>
+        <div>
+            <nav class="navbar">
+                <ul>
+                    <img class="icon" src="{% static 'Images/Icon.png' %}" alt="image not found" width="35px">
+                    <b>TASKTRAX</b>
+                    <li><a href="{% url 'Welcome' %}" id="logout">Log Out</a></li>
+                    <li><a href="{% url 'TeacherHome' %}">Home</a></li>
+                    <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
+                    <li><a href="{% url 'AboutUs' %}">About Us</a></li>
+                    <li><a href="{% url 'WhyTASKTRAX' %}">Why TASKTRAX</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="tablebody">
+            <div class="tablewrapper">
+                <div class="tabletitle">
+                    <h1>My Tasks</h1>    
+                        
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <div class="searchbar">
+                            <i class="bx bx-search-alt-2"></i>
+                            <input type="search" placeholder="Search by Id, title or teacher's name..." name="searchForTeacherTask" id="searchForTeacherTask">
+                            <i class="bx bx-slider" onclick="ToggleFilter()"></i>
+
+                            <div class="filter" id="filterList">
+                                <select id="filter" name="filter" multiple>
+                                    <optgroup label="&nbsp; Priority">
+                                        <option class="first" value="Low">&bull; Low</option>
+                                        <option value="Medium">&bull; Medium</option>
+                                        <option value="High">&bull; High</option>
+                                    </optgroup>
+    
+                                    <optgroup label="&nbsp; Status">
+                                        <option class="first" value="Uncompleted">&bull; Uncompleted</option>
+                                        <option value="Completed">&bull; Completed</option>
+    
+                                    </optgroup>
+                                    <option class="selected" value="all">All</option>                                
+                                </select>
+                                <input type="submit" value="search">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tablecontent">
+                    <table id="myTableT">
+                        <thead>
+                            <tr>
+                                <th>Completed</th>
+                                <th>ID</th>
+                                <th>Task Title</th>
+                                <th>Priority</th>
+                                <th>Created by</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for task in tasks %}
+                                <tr id="trT">
+                                    <td class="tablebtns" style="padding-left: 25.25px;">
+                                        <form id="changeTaskStatus" data-task-id="{{task.taskID}}">
+                                            {% csrf_token %}
+                                            <input type="checkbox" {% if task.status %}checked{% endif %} class="tablebtns" id="btn">
+                                        </form>
+                                    </td>
+                                    <td data-task-id="{{task.taskID}}" onclick="ViewTaskDetails(this.getAttribute('data-task-id'))">{{task.taskID}}</td>
+                                    <td data-task-id="{{task.taskID}}" onclick="ViewTaskDetails(this.getAttribute('data-task-id'))">{{task.title}}</td>
+                                    <td data-task-id="{{task.taskID}}" onclick="ViewTaskDetails(this.getAttribute('data-task-id'))">{{task.priority}}</td>
+                                    <td data-task-id="{{task.taskID}}" onclick="ViewTaskDetails(this.getAttribute('data-task-id'))">{{task.createdBy}}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table> 
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'JS/Index.js' %}"></script>
+    </body>  
+</html>

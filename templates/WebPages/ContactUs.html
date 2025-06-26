@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <link rel="stylesheet" href="{% static 'CSS/WebStyle.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap">
+        <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
+        <title>Conact Us</title>
+    </head>
+
+    <body>
+        <div>
+            <nav class="navbar">
+                <ul>
+                    <img class="icon" src="{% static 'Images/Icon.png' %}" alt="image not found" width="35px">
+                    <b>TASKTRAX</b>
+                    <li><a href="{% url 'Welcome' %}">Home</a></li>
+                    <li><a href="{% url 'ContactUs' %}">Contact Us</a></li>
+                    <li><a href="{% url 'AboutUs' %}">About Us</a></li>
+                    <li><a href="{% url 'WhyTASKTRAX' %}">Why TASKTRAX</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="wabody">
+            <h1>Contact Us</h1>
+
+            <p><b>Team leader: </b>Rawan Ahmed Hassan</p>
+            <p><b>Phone Number: </b>+201098253012</p>
+            <p>
+                <b>Email:</b>
+                <a href="mailto:rawanahassan@gmail.com">rawanalnagary@gmail.com</a>
+            </p>
+
+            <br>
+            <p><b>Team member: </b>Alshimaa Mohamed Abdo</p>
+            <p><b>Phone Number: </b>+201200363192</p>
+            <p>
+                <b>Email:</b>
+                <a href="mailto:mshmsh1582004@gmail.com">mshmsh1582004@gmail.com</a>
+            </p>
+
+            <br>
+            <p><b>Team member: </b>George Sherif Nabil</p>
+            <p><b>Phone Number: </b>+201285949581</p>
+            <p>
+                <b>Email:</b>
+                <a href="mailto:georgesheruf1234@gmail.com">georgesheruf1234@gmail.com</a>
+            </p>
+
+            <br>
+            <p><b>Team member: </b>Bavly Soliman Habashy</p>
+            <p><b>Phone Number: </b>+201210890988</p>
+            <p>
+                <b>Email:</b>
+                <a href="mailto:bavlysoliman117@gmail.com">bavlysoliman117@gmail.com</a>
+            </p>
+        </div>
+        <script src="{% static 'JS/Index.js' %}"></script>
+    </body>
+</html>
